@@ -1,7 +1,6 @@
 const express = require('express');
 const { Client } = require('pg');
 const inquirer = require('inquirer');
-const consoleTable = require('console.table');
 const app = express();
 const PORT = process.env.PORT || 3000;
 

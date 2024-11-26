@@ -3,7 +3,8 @@ DROP DATABASE IF EXISTS employee_trackerDB;
 
 CREATE DATABASE employee_trackerDB;
 
-\c employee_trackerDB;
+-- Connect to the newly created database
+\connect employee_trackerDB;
 
 -- Create the department table
 CREATE TABLE department (
