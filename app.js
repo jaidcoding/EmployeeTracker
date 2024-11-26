@@ -1,19 +1,22 @@
-//Dependencies
+const express = require('express');
+const { Client } = require('pg');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
-const PostgreSQL = require('pg');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const connection = PostgreSQL.createConnection({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: '207275',
-    database: 'employee_trackerDB'
+const client = new Client({
+  host: 'localhost',
+  port: 5432,
+  user: 'postgres',
+  password: '207275',
+  database: 'employee_trackerDB'
 });
 
-connection.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to the PostgreSQL database.');
+client.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to the PostgreSQL database.');
+  startPrompt();
 });
 
 // Function to start the prompt
@@ -225,19 +228,6 @@ function addDepartment() {
     );
   });
 }
-
-const client = new Client({
-  host: 'localhost',
-  user: 'your_postgres_user',
-  password: 'your_postgres_password',
-  database: 'employee_trackerDB'
-});
-
-client.connect(err => {
-  if (err) throw err;
-  console.log('Connected to the PostgreSQL database.');
-  startPrompt();
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
