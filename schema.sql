@@ -1,26 +1,28 @@
 -- Purpose: Create the schema for the employee tracker
 
+CREATE DATABASE employee_trackerDB;
+
 -- Create the department table
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(30)
+    name VARCHAR(30) NOT NULL
 );
 
 -- Create the role table
 CREATE TABLE role (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(30),
-    salary DECIMAL(10, 2),
-    department_id INT,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL(10, 2) NOT NULL,
+    department_id INT NOT NULL,
     FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
 -- Create the employee table
 CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
-    role_id INT,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
     manager_id INT,
     FOREIGN KEY (role_id) REFERENCES role(id),
     FOREIGN KEY (manager_id) REFERENCES employee(id)
@@ -29,15 +31,15 @@ CREATE TABLE employee (
 -- Create the project table
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
-    start_date DATE,
-    end_date DATE
+    name VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL
 );
 
 -- Create the employee_project table to establish many-to-many relationship
 CREATE TABLE employee_project (
-    employee_id INT,
-    project_id INT,
+    employee_id INT NOT NULL,
+    project_id INT NOT NULL,
     PRIMARY KEY (employee_id, project_id),
     FOREIGN KEY (employee_id) REFERENCES employee(id),
     FOREIGN KEY (project_id) REFERENCES project(id)

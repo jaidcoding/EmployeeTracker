@@ -1,7 +1,6 @@
 const express = require('express');
 const inquirer = require('inquirer');
-const pg = require('pg');
-
+const { Client } = require('pg'); // Corrected import
 
 const client = new Client({
   host: 'localhost',
@@ -189,6 +188,7 @@ function updateEmployee() {
 function addRole() {
   client.query("SELECT role.title AS Title, role.salary AS Salary FROM role", (err, res) => {
     if (err) throw err;
+    console.table(res.rows); // Added to display current roles
     inquirer.prompt([
       {
         name: "Title",
@@ -199,14 +199,19 @@ function addRole() {
         name: "Salary",
         type: "input",
         message: "What is the salary?"
+      },
+      {
+        name: "department_id",
+        type: "input",
+        message: "Enter the department ID for this role"
       }
     ]).then(function(res) {
       client.query(
-        "INSERT INTO role (title, salary) VALUES ($1, $2)",
-        [res.Title, res.Salary],
+        "INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)",
+        [res.Title, res.Salary, res.department_id],
         (err) => {
           if (err) throw err;
-          console.table(res.rows);
+          console.log("Role added successfully.");
           startPrompt();
         }
       );
