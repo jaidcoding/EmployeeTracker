@@ -1,8 +1,20 @@
 //Dependencies
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
+const PostgreSQL = require('pg');
 
+const connection = PostgreSQL.createConnection({
+    host: 'localhost',
+    port: 5432,
+    user: 'postgres',
+    password: '207275',
+    database: 'employee_trackerDB'
+});
 
+connection.connect((err) => {
+    if (err) throw err;
+    console.log('Connected to the PostgreSQL database.');
+});
 
 // Function to start the prompt
 function startPrompt() {
