@@ -1,8 +1,7 @@
 const express = require('express');
-const { Client } = require('pg');
 const inquirer = require('inquirer');
-const app = express();
-const PORT = process.env.PORT || 3000;
+const pg = require('pg');
+
 
 const client = new Client({
   host: 'localhost',
@@ -32,7 +31,9 @@ function startPrompt() {
         "Update Employee",
         "Add Employee",
         "Add Role",
-        "Add Department"
+        "Add Department",
+        "View All Projects",
+        "Assign Employee to Project"
       ]
     }
   ]).then(function(val) {
@@ -57,6 +58,12 @@ function startPrompt() {
         break;
       case "Add Department":
         addDepartment();
+        break;
+      case "View All Projects":
+        viewAllProjects();
+        break;
+      case "Assign Employee to Project":
+        assignEmployeeToProject();
         break;
     }
   });
@@ -228,6 +235,48 @@ function addDepartment() {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Function to view all projects
+function viewAllProjects() {
+  client.query("SELECT * FROM project;", (err, res) => {
+    if (err) throw err;
+    console.table(res.rows);
+    startPrompt();
+  });
+}
+
+// Function to assign an employee to a project
+function assignEmployeeToProject() {
+  client.query("SELECT * FROM employee;", (err, res) => {
+    if (err) throw err;
+    const employees = res.rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Select an employee:",
+        choices: employees
+      }
+    ]).then(function(val) {
+      const employeeId = val.employeeId;
+      client.query("SELECT * FROM project;", (err, res) => {
+        if (err) throw err;
+        const projects = res.rows.map(({ id, name }) => ({ name, value: id }));
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "projectId",
+            message: "Select a project:",
+            choices: projects
+          }
+        ]).then(function(val) {
+          const projectId = val.projectId;
+          client.query("INSERT INTO employee_project (employee_id, project_id) VALUES ($1, $2)", [employeeId, projectId], (err, res) => {
+            if (err) throw err;
+            console.log("Employee assigned to project successfully.");
+            startPrompt();
+          });
+        });
+      });
+    });
+  });
+}

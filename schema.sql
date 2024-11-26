@@ -1,10 +1,4 @@
--- Purpose: Create the database for the employee tracker
-DROP DATABASE IF EXISTS employee_trackerDB;
-
-CREATE DATABASE employee_trackerDB;
-
--- Connect to the newly created database
-\connect employee_trackerDB;
+-- Purpose: Create the schema for the employee tracker
 
 -- Create the department table
 CREATE TABLE department (
@@ -32,6 +26,23 @@ CREATE TABLE employee (
     FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 
+-- Create the project table
+CREATE TABLE project (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    start_date DATE,
+    end_date DATE
+);
+
+-- Create the employee_project table to establish many-to-many relationship
+CREATE TABLE employee_project (
+    employee_id INT,
+    project_id INT,
+    PRIMARY KEY (employee_id, project_id),
+    FOREIGN KEY (employee_id) REFERENCES employee(id),
+    FOREIGN KEY (project_id) REFERENCES project(id)
+);
+
 -- Insert the departments
 INSERT INTO department (name)
 VALUES ('Engineering'), ('Sales'), ('Finance'), ('Legal');
@@ -53,6 +64,18 @@ VALUES ('John', 'Doe', 1, NULL),
        ('Malia', 'Brown', 2, 1),
        ('Tom', 'Allen', 3, 3),
        ('Tina', 'Lee', 4, 3);
+
+-- Insert sample projects
+INSERT INTO project (name, start_date, end_date)
+VALUES ('Project Alpha', '2023-01-01', '2023-06-30'),
+       ('Project Beta', '2023-07-01', '2023-12-31');
+
+-- Insert sample employee_project relationships
+INSERT INTO employee_project (employee_id, project_id)
+VALUES (1, 1),
+       (2, 1),
+       (3, 2),
+       (4, 2);
 
 -- Query the database
 SELECT * FROM department;
