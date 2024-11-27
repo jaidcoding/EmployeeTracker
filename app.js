@@ -1,12 +1,14 @@
 const express = require('express');
 const inquirer = require('inquirer');
 const { Client } = require('pg'); // Corrected import
+const cTable = require('console.table');
+
 
 const client = new Client({
   host: 'localhost',
   port: 5432,
-  user: 'postgres',
-  password: '207275',
+  user: 'root',
+  password: 'password',
   database: 'employee_trackerDB'
 });
 
