@@ -1,6 +1,5 @@
 -- Purpose: Create the schema for the employee tracker
 
-CREATE DATABASE employee_trackerDB;
 
 -- Create the department table
 CREATE TABLE department (

@@ -1,15 +1,15 @@
 const express = require('express');
-const inquirer = require('inquirer');
-const { Client } = require('pg'); // Corrected import
+const inquirer = require('inquirer'); // Ensure this line is correct
+const { Client } = require('pg');
 const cTable = require('console.table');
 
 
 const client = new Client({
   host: 'localhost',
   port: 5432,
-  user: 'root',
-  password: 'password',
-  database: 'employee_trackerDB'
+  user: 'postgres',
+  password: '207275',
+  database: 'employee_tracker' // Corrected database name
 });
 
 client.connect((err) => {
@@ -92,7 +92,7 @@ function viewAllRoles() {
 
 // Function to view all departments
 function viewAllDepartments() {
-  client.query("SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id GROUP BY department.id;", 
+  client.query("SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id GROUP BY employee.first_name, employee.last_name, department.id;", 
   (err, res) => {
     if (err) throw err;
     console.table(res.rows);
@@ -160,7 +160,12 @@ function updateEmployee() {
       {
         type: "input",
         message: "Enter the employee ID you would like to update",
-        name: "id"
+        name: "id",
+        validate: function(value) {
+          const valid = !isNaN(parseInt(value));
+          return valid || "Please enter a valid number";
+        },
+        filter: Number
       }
     ]).then(function(val) {
       var employeeId = val.id;
